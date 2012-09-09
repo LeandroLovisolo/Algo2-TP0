@@ -34,34 +34,34 @@ public:
 	bool operator==(const Anillo<T>&) const;
 
 	/*
-	 * Dice si el anillo es vacío.
+	 * Dice si el anillo es vac√≠o.
 	 */
 	bool esVacio() const;
 
 	/*
-	 * Dice el tamanio del anillo
+	 * Dice el tama√±o del anillo
 	 */
 	int tamanio() const;
 
 	/*
 	 * Devuelve el elemento actual del anillo
-	 * PRE: no es vacío el anillo.
+	 * PRE: no es vac√≠o el anillo.
 	 */
     const T& actual() const;
 
 	/*
-	 * Devuelve el próximo elemento según el orden del anillo.
-	 * El anillo debe rotar. Con lo cual sucesivas llamadas a esta función
+	 * Devuelve el pr√≥ximo elemento seg√∫n el orden del anillo.
+	 * El anillo debe rotar. Con lo cual sucesivas llamadas a esta funci√≥n
 	 * retornan distintos valores.
 	 *
 	 * El valor retornado pasa a ser el anterior.
 	 *
-	 * PRE: no es vacío el anillo.
+	 * PRE: no es vac√≠o el anillo.
 	 */
 	const T& siguiente();
 	
 	/*
-	 * Agrega el elemento al anillo. Recordar que el último agregado es el
+	 * Agrega el elemento al anillo. Recordar que el √∫ltimo agregado es el
 	 * actual
 	 */
 	void agregar(const T&);
@@ -74,24 +74,24 @@ public:
 	/*
 	 * Marca el elemento actual.
 	 *
-	 * PRE: no es vacío el anillo.
+	 * PRE: no es vac√≠o el anillo.
 	 */
     void marcar();
 
 	/*
-	 * Indica si algún del anillo está marcado.
+	 * Indica si alg√∫n del anillo est√° marcado.
 	 */
 	bool hayMarcado() const;
 
 	/*
-	 * Indica cuál es el elemento marcado la última vez.
+	 * Indica cu√°l es el elemento marcado la √∫ltima vez.
 	 *
 	 * PRE: hayMarcado
 	 */
 	const T& marcado() const;
 
 	/*
-	 * Vuelve hacia atrás un elemento.
+	 * Vuelve hacia atr√°s un elemento.
 	 * El anterior, en caso de existir, no debe alterarse.
 	 */
 	void retroceder();
@@ -124,7 +124,73 @@ ostream& operator<<(ostream& out, const Anillo<T>& a) {
 	return a.mostrarAnillo(out);
 }
 
-// implementación a hacer por los alumnos
+template<typename T>
+Anillo<T>::Anillo() {
+}
 
+template<typename T>
+Anillo<T>::Anillo(const Anillo<T>& constAnillo) {
+}
+
+template<typename T>
+Anillo<T>::~Anillo() {
+}
+
+template<typename T>
+bool Anillo<T>::operator ==(const Anillo<T>& constAnillo) const {
+	return true;
+}
+
+template<typename T>
+bool Anillo<T>::esVacio() const {
+	return true;
+}
+
+template<typename T>
+int Anillo<T>::tamanio() const {
+	return 0;
+}
+
+template<typename T>
+const T& Anillo<T>::actual() const {
+	return T();
+}
+
+template<typename T>
+const T& Anillo<T>::siguiente() {
+	T *t = new T();
+	return *t;
+}
+
+template<typename T>
+void Anillo<T>::agregar(const T& elem) {
+}
+
+template<typename T>
+void Anillo<T>::eliminar(const T& elem) {
+}
+
+template<typename T>
+void Anillo<T>::marcar() {
+}
+
+template<typename T>
+bool Anillo<T>::hayMarcado() const {
+	return false;
+}
+
+template<typename T>
+const T& Anillo<T>::marcado() const {
+	return T();
+}
+
+template<typename T>
+void Anillo<T>::retroceder() {
+}
+
+template<typename T>
+ostream& Anillo<T>::mostrarAnillo(ostream& os) const {
+	return os;
+}
 
 #endif //ANILLO_H_
