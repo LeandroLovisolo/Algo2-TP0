@@ -115,7 +115,14 @@ private:
 
 	//Aca va la implementacion del nodo.
 	struct Nodo {
-	};
+		struct Nodo* anterior;
+		struct Nodo* siguiente;
+		T dato;
+	} ;
+
+	struct Nodo* _actual;
+	struct Nodo* _marcado;
+	int _tamanio;
 
 };
 
@@ -126,70 +133,147 @@ ostream& operator<<(ostream& out, const Anillo<T>& a) {
 
 template<typename T>
 Anillo<T>::Anillo() {
+	_tamanio = 0;
+	_actual = _marcado = NULL;
 }
 
 template<typename T>
-Anillo<T>::Anillo(const Anillo<T>& constAnillo) {
+Anillo<T>::Anillo(const Anillo<T>& otro) {
+	_tamanio = otro._tamanio;
+	_actual = _marcado = NULL;
+
+	struct Nodo* nodo = otro._actual;
+	for(int i = 0; i < _tamanio; i++) {
+		agregar(nodo->dato);
+		if(otro._marcado == nodo) _marcado = _actual;
+		nodo = nodo->siguiente;
+	}
 }
 
 template<typename T>
 Anillo<T>::~Anillo() {
+	struct Nodo* nodo = _actual;
+	for(int i = 0; i < _tamanio; i++) {
+		struct Nodo* aEliminar = nodo;
+		nodo = nodo->siguiente;
+		delete aEliminar;
+	}
 }
 
 template<typename T>
-bool Anillo<T>::operator ==(const Anillo<T>& constAnillo) const {
+bool Anillo<T>::operator ==(const Anillo<T>& otro) const {
+	if(_tamanio       != otro->_tamanio)       return false;
+	if(_actual->dato  != otro->_actual->dato)  return false;
+	if(_marcado->dato != otro->_marcado->dato) return false;
+
+	struct Nodo* nodo = _actual, otroNodo = otro->_actual;
+
+	for(int i = 0; i < _tamanio; i++) {
+		if(nodo->dato != otroNodo->dato) return false;
+		nodo = nodo->siguiente;
+		otroNodo = otroNodo->siguiente;
+	}
+
 	return true;
 }
 
 template<typename T>
 bool Anillo<T>::esVacio() const {
-	return true;
+	return _tamanio == 0;
 }
 
 template<typename T>
 int Anillo<T>::tamanio() const {
-	return 0;
+	return _tamanio;
 }
 
 template<typename T>
 const T& Anillo<T>::actual() const {
-	return T();
+	return _actual;
 }
 
 template<typename T>
 const T& Anillo<T>::siguiente() {
-	T *t = new T();
-	return *t;
+	_actual = _actual->siguiente;
+	return _actual->dato;
 }
 
 template<typename T>
 void Anillo<T>::agregar(const T& elem) {
+	struct Nodo* nuevoNodo = new Nodo;
+	nuevoNodo->dato = elem;
+	if(_tamanio == 0) {
+		nuevoNodo->anterior = nuevoNodo->siguiente = nuevoNodo;
+	} else {
+		nuevoNodo->anterior = _actual;
+		nuevoNodo->siguiente = _actual->siguiente;
+
+		// Modifico el nodo anterior al nuevo
+		nuevoNodo->anterior->siguiente = nuevoNodo;
+
+		// Modifico el nodo siguiente al nuevo
+		nuevoNodo->siguiente->anterior = nuevoNodo;
+	}
+	_actual = nuevoNodo;
+	_tamanio++;
 }
 
 template<typename T>
 void Anillo<T>::eliminar(const T& elem) {
+	struct Nodo* nodo = _actual;
+	for(int i = 0; i < _tamanio; i++) {
+		if(nodo->dato == elem) {
+			if(_tamanio == 1) {
+				delete nodo;
+				_actual = NULL;
+			} else {
+				nodo->anterior->siguiente = nodo->siguiente;
+				nodo->siguiente->anterior = nodo->anterior;
+				if(_actual == nodo) {
+					_actual = nodo->siguiente;
+				}
+				delete nodo;
+			}
+			_tamanio--;
+			break;
+		}
+		nodo = nodo->siguiente;
+	}
 }
 
 template<typename T>
 void Anillo<T>::marcar() {
+	_marcado = _actual;
 }
 
 template<typename T>
 bool Anillo<T>::hayMarcado() const {
-	return false;
+	return _marcado != NULL;
 }
 
 template<typename T>
 const T& Anillo<T>::marcado() const {
-	return T();
+	return _marcado;
 }
 
 template<typename T>
 void Anillo<T>::retroceder() {
+	_actual = _actual->anterior;
 }
 
 template<typename T>
 ostream& Anillo<T>::mostrarAnillo(ostream& os) const {
+	struct Nodo* nodo = _actual;
+
+	os << '[';
+	for(int i = 0; i < _tamanio; i++) {
+		if(i > 0) os << ", ";
+		if(nodo == _marcado) os << '*';
+		os << nodo->dato;
+		nodo = nodo->anterior;
+	}
+	os << ']';
+
 	return os;
 }
 
