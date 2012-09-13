@@ -139,15 +139,17 @@ Anillo<T>::Anillo() {
 
 template<typename T>
 Anillo<T>::Anillo(const Anillo<T>& otro) {
-	_tamanio = otro._tamanio;
+	_tamanio = 0;
 	_actual = _marcado = NULL;
 
 	struct Nodo* nodo = otro._actual;
-	for(int i = 0; i < _tamanio; i++) {
+	for(int i = 0; i < otro._tamanio; i++) {
 		agregar(nodo->dato);
 		if(otro._marcado == nodo) _marcado = _actual;
 		nodo = nodo->siguiente;
 	}
+
+	if(!esVacio()) siguiente();
 }
 
 template<typename T>
@@ -162,11 +164,12 @@ Anillo<T>::~Anillo() {
 
 template<typename T>
 bool Anillo<T>::operator ==(const Anillo<T>& otro) const {
-	if(_tamanio       != otro->_tamanio)       return false;
-	if(_actual->dato  != otro->_actual->dato)  return false;
-	if(_marcado->dato != otro->_marcado->dato) return false;
+	if(_tamanio       != otro._tamanio)       return false;
+	if(_actual->dato  != otro._actual->dato)  return false;
+	if(_marcado->dato != otro._marcado->dato) return false;
 
-	struct Nodo* nodo = _actual, otroNodo = otro->_actual;
+	struct Nodo* nodo = _actual;
+	struct Nodo* otroNodo = otro._actual;
 
 	for(int i = 0; i < _tamanio; i++) {
 		if(nodo->dato != otroNodo->dato) return false;
@@ -189,7 +192,7 @@ int Anillo<T>::tamanio() const {
 
 template<typename T>
 const T& Anillo<T>::actual() const {
-	return _actual;
+	return _actual->dato;
 }
 
 template<typename T>
@@ -224,7 +227,6 @@ void Anillo<T>::eliminar(const T& elem) {
 	for(int i = 0; i < _tamanio; i++) {
 		if(nodo->dato == elem) {
 			if(_tamanio == 1) {
-				delete nodo;
 				_actual = NULL;
 			} else {
 				nodo->anterior->siguiente = nodo->siguiente;
@@ -232,8 +234,9 @@ void Anillo<T>::eliminar(const T& elem) {
 				if(_actual == nodo) {
 					_actual = nodo->siguiente;
 				}
-				delete nodo;
 			}
+			if(nodo == _marcado) _marcado = NULL;
+			delete nodo;
 			_tamanio--;
 			break;
 		}
@@ -253,7 +256,7 @@ bool Anillo<T>::hayMarcado() const {
 
 template<typename T>
 const T& Anillo<T>::marcado() const {
-	return _marcado;
+	return _marcado->dato;
 }
 
 template<typename T>
@@ -268,8 +271,8 @@ ostream& Anillo<T>::mostrarAnillo(ostream& os) const {
 	os << '[';
 	for(int i = 0; i < _tamanio; i++) {
 		if(i > 0) os << ", ";
-		if(nodo == _marcado) os << '*';
 		os << nodo->dato;
+		if(nodo == _marcado) os << '*';
 		nodo = nodo->anterior;
 	}
 	os << ']';
