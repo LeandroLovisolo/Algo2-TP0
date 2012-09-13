@@ -118,6 +118,8 @@ private:
 		struct Nodo* anterior;
 		struct Nodo* siguiente;
 		T dato;
+
+		Nodo(const T& t) : dato(t) {}
 	} ;
 
 	struct Nodo* _actual;
@@ -203,13 +205,12 @@ const T& Anillo<T>::siguiente() {
 
 template<typename T>
 void Anillo<T>::agregar(const T& elem) {
-	struct Nodo* nuevoNodo = new Nodo;
-	nuevoNodo->dato = elem;
+	struct Nodo* nuevoNodo = new Nodo(elem);
 	if(_tamanio == 0) {
 		nuevoNodo->anterior = nuevoNodo->siguiente = nuevoNodo;
 	} else {
-		nuevoNodo->anterior = _actual;
-		nuevoNodo->siguiente = _actual->siguiente;
+		nuevoNodo->anterior  = _actual->anterior;
+		nuevoNodo->siguiente = _actual;
 
 		// Modifico el nodo anterior al nuevo
 		nuevoNodo->anterior->siguiente = nuevoNodo;
@@ -273,7 +274,7 @@ ostream& Anillo<T>::mostrarAnillo(ostream& os) const {
 		if(i > 0) os << ", ";
 		os << nodo->dato;
 		if(nodo == _marcado) os << '*';
-		nodo = nodo->anterior;
+		nodo = nodo->siguiente;
 	}
 	os << ']';
 
